@@ -36,6 +36,11 @@ public class WebViewBridgeManager extends ReactWebViewManager {
     @Override
     protected WebView createViewInstance(ThemedReactContext reactContext) {
         WebView root = super.createViewInstance(reactContext);
+        // API >= 16
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN)
+        {
+            root.getSettings().setAllowUniversalAccessFromFileURLs(true);
+        }
         root.addJavascriptInterface(new JavascriptBridge(root), "WebViewBridge");
         return root;
     }

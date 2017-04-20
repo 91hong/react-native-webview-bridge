@@ -64,6 +64,8 @@ NSString *const RCTWebViewBridgeSchema = @"wvb";
     _automaticallyAdjustContentInsets = YES;
     _contentInset = UIEdgeInsetsZero;
     _webView = [[UIWebView alloc] initWithFrame:self.bounds];
+    NSHTTPCookieStorage *cook = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    [cook setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways];
     _webView.delegate = self;
     [self addSubview:_webView];
   }

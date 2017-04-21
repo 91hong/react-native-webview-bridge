@@ -36,11 +36,26 @@ public class WebViewBridgeManager extends ReactWebViewManager {
     @Override
     protected WebView createViewInstance(ThemedReactContext reactContext) {
         WebView root = super.createViewInstance(reactContext);
-        // API >= 16
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN)
-        {
-            root.getSettings().setAllowUniversalAccessFromFileURLs(true);
+        // 修复 cookie 问题
+        if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            CookieManager.getInstance().setAcceptThirdPartyCookies(root, true);
+        } else {
+            CookieManager.getInstance().setAcceptCookie(true);
         }
+        if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+            CookieManager.getInstance().setAcceptThirdPartyCookies(root, true);
+        }
+
+        root.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                handler.proceed(); // 接受证书
+            }
+        });
         root.addJavascriptInterface(new JavascriptBridge(root), "WebViewBridge");
         return root;
     }
